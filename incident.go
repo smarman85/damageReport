@@ -47,6 +47,8 @@ func main() {
 
         // set up api req
         // request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?since=2018-12-03T10:00&until=2018-12-10T10:00&limit=100", nil)
+        // pagination offset has to increase by limit number with every request
+        // request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?since=2018-12-03T10:00&until=2018-12-10T10:00&limit=100&offset=100", nil) 
         request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?" + queryString + "&limit=100", nil)
         request.Header.Set("Accept", "application/vnd.pagerduty+json;version=2")
         request.Header.Set("Authorization", "Token token=" + auth_token)
