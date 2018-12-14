@@ -12,6 +12,8 @@ import (
         "dateRange"
 )
 
+var HomeDir string = os.Getenv("HOME")
+
 type Incident struct {
         Incident_info []Incidents `json:"incidents"`
         MoreIncidents bool `json:"more"`
@@ -30,11 +32,11 @@ type Team struct {
 
 func check(e error) {
         if e != nil {
-          panic(e)
+                panic(e)
         }
 }
 
-func reportIncident(responseBody []byte) {
+func reportIncident(responseBody []byte) (bool, int) {
 
         // initialize incidnet var
         var incident Incident
@@ -51,26 +53,27 @@ func reportIncident(responseBody []byte) {
                 }
         }
 
-        fmt.Println("Number of Incidents last week: " + strconv.Itoa(len(incident.Incident_info)))
-}
+        incidentCount := len(incident.Incident_info)
 
-func main() {
-        homeDir := os.Getenv("HOME")
-        err := godotenv.Load(homeDir + "/go/src/github.com/damageReport/.env")
-        if err != nil {
-          log.Fatal("Error loading .env file")
+        // more results?
+        var keepGoing bool
+        if incident.MoreIncidents == true {
+               keepGoing = true
+        } else {
+               keepGoing = false
         }
 
-        // set pagerDuty token
-        auth_token := os.Getenv("PAGER_DUTY_TOKEN")
-        queryString := dateRange.Run()
+        return keepGoing, incidentCount
+
+} // close func reportIncident
+
+func apiRequest(queryString, authToken, offset string) []byte {
 
         // set up api req
         // pagination offset has to increase by limit number with every request
-        // request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?since=2018-12-03T10:00&until=2018-12-10T10:00&limit=100&offset=100", nil) 
-        request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?" + queryString + "&limit=100", nil)
+        request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?" + queryString + "&limit=100&offset=" + offset, nil)
         request.Header.Set("Accept", "application/vnd.pagerduty+json;version=2")
-        request.Header.Set("Authorization", "Token token=" + auth_token)
+        request.Header.Set("Authorization", "Token token=" + authToken)
 
         resp, err := http.DefaultClient.Do(request)
         check(err)
@@ -81,7 +84,37 @@ func main() {
         body, _ := ioutil.ReadAll(resp.Body)
         check(err)
 
-        reportIncident(body)
+        return body
+
+}
+
+func main() {
+
+        err := godotenv.Load(HomeDir + "/go/src/github.com/damageReport/.env")
+        if err != nil {
+                log.Fatal("Error loading .env file")
+        }
+
+        // set pagerDuty token
+        authToken := os.Getenv("PAGER_DUTY_TOKEN")
+        queryString := dateRange.Run()
+
+        body := apiRequest(queryString, authToken, "0")
+
+        moreResults, incidentCount := reportIncident(body)
+
+        var alertCount int = incidentCount
+        offset := 0
+        for moreResults {
+                offset += 100
+                body := apiRequest(queryString, authToken, strconv.Itoa(offset))
+                levelDeeper, incidentCount := reportIncident(body)
+                alertCount += incidentCount
+                if levelDeeper == false {
+                        break
+                }
+        }
+        fmt.Println("Number of Incidents last week: " + strconv.Itoa(alertCount))
 
 
 } // close func main() 
