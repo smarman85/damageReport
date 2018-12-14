@@ -14,6 +14,7 @@ import (
 
 type Incident struct {
         Incident_info []Incidents `json:"incidents"`
+        MoreIncidents bool `json:"more"`
 }
 
 type Incidents struct {
@@ -33,7 +34,26 @@ func check(e error) {
         }
 }
 
-// load .env file
+func reportIncident(responseBody []byte) {
+
+        // initialize incidnet var
+        var incident Incident
+        err := json.Unmarshal(responseBody, &incident)
+        check(err)
+
+        for i := 0; i < len(incident.Incident_info); i ++ {
+                if incident.Incident_info[i].Team.TeamName == "DevOps Team" {
+                        fmt.Println("Incident Number: " + strconv.Itoa(incident.Incident_info[i].Number))
+                        fmt.Println("Incident INFO:   " + incident.Incident_info[i].Info)
+                        fmt.Println("Incident Team:   " + incident.Incident_info[i].Team.TeamName)
+                        fmt.Println("Learn More:      " + incident.Incident_info[i].Detail)
+                        fmt.Println("**************************************")
+                }
+        }
+
+        fmt.Println("Number of Incidents last week: " + strconv.Itoa(len(incident.Incident_info)))
+}
+
 func main() {
         homeDir := os.Getenv("HOME")
         err := godotenv.Load(homeDir + "/go/src/github.com/damageReport/.env")
@@ -46,7 +66,6 @@ func main() {
         queryString := dateRange.Run()
 
         // set up api req
-        // request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?since=2018-12-03T10:00&until=2018-12-10T10:00&limit=100", nil)
         // pagination offset has to increase by limit number with every request
         // request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?since=2018-12-03T10:00&until=2018-12-10T10:00&limit=100&offset=100", nil) 
         request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?" + queryString + "&limit=100", nil)
@@ -62,21 +81,7 @@ func main() {
         body, _ := ioutil.ReadAll(resp.Body)
         check(err)
 
-        // initialize incidnet var
-        var incident Incident
-        err = json.Unmarshal(body, &incident)
-        check(err)
+        reportIncident(body)
 
-        for i := 0; i < len(incident.Incident_info); i ++ {
-                if incident.Incident_info[i].Team.TeamName == "DevOps Team" {
-                        fmt.Println("Incident Number: " + strconv.Itoa(incident.Incident_info[i].Number))
-                        fmt.Println("Incident INFO:   " + incident.Incident_info[i].Info)
-                        fmt.Println("Incident Team:   " + incident.Incident_info[i].Team.TeamName)
-                        fmt.Println("Learn More:      " + incident.Incident_info[i].Detail)
-                        fmt.Println("**************************************")
-                }
-        }
-
-        fmt.Println("Number of Incidents last week: " + strconv.Itoa(len(incident.Incident_info)))
 
 } // close func main() 
