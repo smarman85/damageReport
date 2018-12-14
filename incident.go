@@ -35,7 +35,8 @@ func check(e error) {
 
 // load .env file
 func main() {
-        err := godotenv.Load("/Users/smarman/go/src/github.com/damageReport/.env")
+        homeDir := os.Getenv("HOME")
+        err := godotenv.Load(homeDir + "/go/src/github.com/damageReport/.env")
         if err != nil {
           log.Fatal("Error loading .env file")
         }
