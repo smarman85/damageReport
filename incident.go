@@ -1,22 +1,22 @@
 package main
 
 import (
-        "os"
-        "github.com/joho/godotenv"
-        "fmt"
+        "dateRange"
         "encoding/json"
+        "fmt"
+        "github.com/joho/godotenv"
         "io/ioutil"
         "log"
         "net/http"
+        "os"
         "strconv"
-        "dateRange"
 )
 
 var HomeDir string = os.Getenv("HOME")
 
 type Incident struct {
         Incident_info []Incidents `json:"incidents"`
-        MoreIncidents bool `json:"more"`
+        MoreIncidents bool        `json:"more"`
 }
 
 type Incidents struct {
@@ -43,7 +43,7 @@ func reportIncident(responseBody []byte) (bool, int) {
         err := json.Unmarshal(responseBody, &incident)
         check(err)
 
-        for i := 0; i < len(incident.Incident_info); i ++ {
+        for i := 0; i < len(incident.Incident_info); i++ {
                 if incident.Incident_info[i].Team.TeamName == "DevOps Team" {
                         fmt.Println("Incident Number: " + strconv.Itoa(incident.Incident_info[i].Number))
                         fmt.Println("Incident INFO:   " + incident.Incident_info[i].Info)
@@ -58,9 +58,9 @@ func reportIncident(responseBody []byte) (bool, int) {
         // more results?
         var keepGoing bool
         if incident.MoreIncidents == true {
-               keepGoing = true
+                keepGoing = true
         } else {
-               keepGoing = false
+                keepGoing = false
         }
 
         return keepGoing, incidentCount
@@ -71,9 +71,9 @@ func apiRequest(queryString, authToken, offset string) []byte {
 
         // set up api req
         // pagination offset has to increase by limit number with every request
-        request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?" + queryString + "&limit=100&offset=" + offset, nil)
+        request, _ := http.NewRequest("GET", "https://api.pagerduty.com/incidents?"+queryString+"&limit=100&offset="+offset, nil)
         request.Header.Set("Accept", "application/vnd.pagerduty+json;version=2")
-        request.Header.Set("Authorization", "Token token=" + authToken)
+        request.Header.Set("Authorization", "Token token="+authToken)
 
         resp, err := http.DefaultClient.Do(request)
         check(err)
@@ -115,6 +115,5 @@ func main() {
                 }
         }
         fmt.Println("Number of Incidents last week: " + strconv.Itoa(alertCount))
-
 
 } // close func main() 
