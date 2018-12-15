@@ -43,6 +43,7 @@ func reportIncident(responseBody []byte) (bool, int) {
         err := json.Unmarshal(responseBody, &incident)
         check(err)
 
+        var incidentCount int = 0
         for i := 0; i < len(incident.Incident_info); i++ {
                 if incident.Incident_info[i].Team.TeamName == "DevOps Team" {
                         fmt.Println("Incident Number: " + strconv.Itoa(incident.Incident_info[i].Number))
@@ -50,10 +51,9 @@ func reportIncident(responseBody []byte) (bool, int) {
                         fmt.Println("Incident Team:   " + incident.Incident_info[i].Team.TeamName)
                         fmt.Println("Learn More:      " + incident.Incident_info[i].Detail)
                         fmt.Println("**************************************")
+                        incidentCount += 1
                 }
         }
-
-        incidentCount := len(incident.Incident_info)
 
         // more results?
         var keepGoing bool
