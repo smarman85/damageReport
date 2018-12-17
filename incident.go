@@ -1,7 +1,7 @@
 package main
 
 import (
-        "dateRange"
+        "github.com/smarman85/dateRange"
         "encoding/json"
         "fmt"
         "github.com/joho/godotenv"
@@ -90,7 +90,7 @@ func apiRequest(queryString, authToken, offset string) []byte {
 
 func main() {
 
-        err := godotenv.Load(HomeDir + "/go/src/github.com/damageReport/.env")
+        err := godotenv.Load(HomeDir + "/go/src/github.com/smarman85/damageReport/.env")
         if err != nil {
                 log.Fatal("Error loading .env file")
         }
