@@ -114,6 +114,6 @@ func main() {
                         break
                 }
         }
-        fmt.Println("Number of Incidents last week: " + strconv.Itoa(alertCount))
+        fmt.Println("Number of Incidents: " + strconv.Itoa(alertCount))
 
 } // close func main() 
