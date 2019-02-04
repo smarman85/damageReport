@@ -22,6 +22,8 @@ type Incident struct {
 type Incidents struct {
         Number int    `json:"incident_number"`
         Info   string `json:"description"`
+        Creation string `json:"created_at"`
+        LastUpdate string `json:"last_status_change_at"`
         Team   Team   `json:"escalation_policy"`
         Detail string `json:"html_url"`
 }
@@ -46,10 +48,12 @@ func reportIncident(responseBody []byte) (bool, int) {
         var incidentCount int = 0
         for i := 0; i < len(incident.Incident_info); i++ {
                 if incident.Incident_info[i].Team.TeamName == "DevOps Team" {
-                        fmt.Println("Incident Number: " + strconv.Itoa(incident.Incident_info[i].Number))
-                        fmt.Println("Incident INFO:   " + incident.Incident_info[i].Info)
-                        fmt.Println("Incident Team:   " + incident.Incident_info[i].Team.TeamName)
-                        fmt.Println("Learn More:      " + incident.Incident_info[i].Detail)
+                        fmt.Println("Incident Number:       " + strconv.Itoa(incident.Incident_info[i].Number))
+                        fmt.Println("Incident Created at:   " + incident.Incident_info[i].Creation)
+                        fmt.Println("Last Status Change:    " + incident.Incident_info[i].LastUpdate)
+                        fmt.Println("Incident INFO:         " + incident.Incident_info[i].Info)
+                        fmt.Println("Incident Team:         " + incident.Incident_info[i].Team.TeamName)
+                        fmt.Println("Learn More:            " + incident.Incident_info[i].Detail)
                         fmt.Println("**************************************")
                         incidentCount += 1
                 }
