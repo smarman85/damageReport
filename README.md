@@ -1,10 +1,8 @@
 #pagerDuty
 
 ```bash
-# Create the .env file
-$ cp env .env
-# Use the link as a ref. to set the pagerDuty api token
-PAGER_DUTY_TOKEN="https://support.pagerduty.com/docs/using-the-api"
+# Use the link as a ref. to set the pagerDuty api token and add this variable to your bash_profile
+export PAGER_DUTY_TOKEN="https://support.pagerduty.com/docs/using-the-api"
 ```
 
 ##run

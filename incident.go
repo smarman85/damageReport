@@ -4,15 +4,15 @@ import (
         "github.com/smarman85/dateRange"
         "encoding/json"
         "fmt"
-        "github.com/joho/godotenv"
+        //"github.com/joho/godotenv"
         "io/ioutil"
-        "log"
+        //"log"
         "net/http"
         "os"
         "strconv"
 )
 
-var HomeDir string = os.Getenv("HOME")
+//var HomeDir string = os.Getenv("HOME")
 
 type Incident struct {
         Incident_info []Incidents `json:"incidents"`
@@ -94,10 +94,10 @@ func apiRequest(queryString, authToken, offset string) []byte {
 
 func main() {
 
-        err := godotenv.Load(HomeDir + "/go/src/github.com/smarman85/damageReport/.env")
-        if err != nil {
-                log.Fatal("Error loading .env file")
-        }
+        //err := godotenv.Load(HomeDir + "/go/src/github.com/smarman85/damageReport/.env")
+        //if err != nil {
+        //        log.Fatal("Error loading .env file")
+        //}
 
         // set pagerDuty token
         authToken := os.Getenv("PAGER_DUTY_TOKEN")
