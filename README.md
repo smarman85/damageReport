@@ -10,3 +10,12 @@ export PAGER_DUTY_TOKEN="https://support.pagerduty.com/docs/using-the-api"
 $ go run app.go
 ```
 # damageReport
+
+## Dockerize this:
+```
+#Build:
+$ docker build -t damagereport .
+
+#Run:
+$ docker run -e PAGER_DUTY_TOKEN="$(echo $PAGER_DUTY_TOKEN)" --rm damagereport
+```
