@@ -7,6 +7,7 @@ import (
         "io/ioutil"
         "net/http"
         "os"
+				"log"
         "strconv"
 )
 
@@ -90,6 +91,10 @@ func apiRequest(queryString, authToken, offset string) []byte {
 }
 
 func main() {
+
+        if os.Getenv("PAGER_DUTY_TOKEN") == "" {
+                log.Fatal("Error loading PagerDuty environment variable")
+        }
 
         // set pagerDuty token
         authToken := os.Getenv("PAGER_DUTY_TOKEN")
