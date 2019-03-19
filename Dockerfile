@@ -10,5 +10,4 @@ FROM smarman/alpine-base
 WORKDIR /app
 COPY --from=build-env /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs
 COPY --from=build-env /go/src/damageReport/incident /app
-RUN pwd && ls
 ENTRYPOINT ./incident
